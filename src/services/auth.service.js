@@ -1,13 +1,20 @@
 const User = require("../models/User")
 const { verifyPassword, hashPassword } = require("../utils/bcrypt")
 const { encodePayload } = require("../utils/jwt")
+const { createBalance } = require("./balance.service")
 
 const register_user = async (params) => {
     params.password = await hashPassword(params.password)
-     const user = new User(params)
-     const savedUser = await user.save()
-     savedUser.password=undefined
+    const user = new User(params)
+    const balance=await createBalance(user._id)
+    user.balance_id=balance._id
+    const savedUser = await user.save()
+    savedUser.password=undefined
+    
+    // console.log(balance);
+     console.log("ferid",savedUser);
      return savedUser
+     
  }
 
 
