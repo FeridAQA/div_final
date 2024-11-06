@@ -7,13 +7,19 @@ app.use(express.json())
 // databasa connet
 const connectDB = require('./src/database/index')
 
-// post
+// port
 const { port } = require("./src/config");
+
+//route
+const routes=require('./src/routes')
 
 
 app.get('/', (req, res) => {
   res.send('DIV final')
 })
+
+app.use('/api', routes)
+
 
 
 connectDB();
