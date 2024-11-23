@@ -7,13 +7,13 @@ const all_balance = async () => {
     return balances
 }
 const get_balance = async (id) => {
-    console.log("bu ==>",id);
-    
+    console.log("bu ==>`", id);
+
     const balance = await Balance.findById(id)
     console.log(balance);
-    
+
     return balance
-    
+
 }
 
 
@@ -49,9 +49,25 @@ const incrementUserBalance = async (userId, amount, description) => {
     return balance.balance_history
 }
 
+const decrementUserBalance = async (userId, amount, description) => {
+    const balance = await Balance.findOne({ user_id: new mongoose.Types.ObjectId(userId) })
+    if (!balance) {
+        throw new Error("Balance not found for user");
+    }
+
+    balance.total_balance -=amount
+    balance.balance_history.push({
+        amount,
+        type: 'decrement',
+        description
+    })
+    await balance.save()
+    return balance.balance_history
+}
 module.exports = {
     incrementUserBalance,
     createBalance,
     all_balance,
     get_balance,
+    decrementUserBalance
 };

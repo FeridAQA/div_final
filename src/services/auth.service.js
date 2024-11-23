@@ -4,18 +4,32 @@ const { encodePayload } = require("../utils/jwt")
 const { createBalance } = require("./balance.service")
 
 const register_user = async (params) => {
-    params.password = await hashPassword(params.password)
-    const user = new User(params)
-    const balance=await createBalance(user._id)
-    user.balance_id=balance._id
-    const savedUser = await user.save()
-    savedUser.password=undefined
-    
-    // console.log(balance);
-     console.log("ferid",savedUser);
-     return savedUser
-     
- }
+    try {
+        // Şifrənin hash olunması
+        params.password = await hashPassword(params.password);
+
+        // İstifadəçi yaradılması
+        const user = new User(params);
+        const savedUser = await user.save();
+
+        // Balansın yaradılması
+        const balance = await createBalance(savedUser._id);
+        savedUser.balance_id = balance._id;
+
+        // Yenilənmiş istifadəçinin saxlanması
+        await savedUser.save();
+
+        // Şifrənin müvəqqəti undefined edilməsi
+        savedUser.password = undefined;
+
+        console.log("ferid", savedUser);
+        return savedUser;
+    } catch (error) {
+        console.error("Xəta baş verdi:", error);
+        throw error; // Xətanı qaytar
+    }
+};
+
 
 
 
