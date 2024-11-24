@@ -12,7 +12,7 @@ const authMiddleware = async (req, res, next) => {
 
     const result = decodePayload(token);
     if (!result) {
-        return res.status(401).json({ message: "Invalid token ferd" });
+        return res.status(401).json({ message: "Invalid token ferid" });
     }
     // console.log('result====>',result);
 
