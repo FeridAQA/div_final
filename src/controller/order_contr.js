@@ -1,4 +1,4 @@
-const { createOrderService, get_user_order, order_find_by_id } = require("../services/order.service");
+const { createOrderService, get_user_order, order_find_by_id, order_all, updateOrderService } = require("../services/order.service");
 const { find_user_by_Id } = require("../services/user.service");
 
 
@@ -73,8 +73,45 @@ const c_order_find_by_id = async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 }
+
+// order_all
+const c_order_all = async (req, res) => {
+    try {
+        const orders = await order_all();
+        res.json(orders);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+}
+
+
+//update order
+const c_update_order = async (req, res) => {
+    try {
+    const { orderId } = req.params; // URL-dən order ID götürülür
+    const updateData = req.body; // Yenilənəcək məlumatlar body-dən alınır
+
+    if (!orderId) {
+        return res.status(400).json({ message: "Order ID is required" });
+    }
+
+    // Service funksiyasını çağır
+    const updatedOrder = await updateOrderService(orderId, updateData);
+
+    return res.status(200).json({
+        message: "Order updated successfully",
+        order: updatedOrder,
+    });
+} catch (error) {
+    console.error("Error in updateOrderController:", error.message);
+    res.status(500).json({ message: error.message });
+}
+};
+
 module.exports = {
     c_createOrder,
     c_get_user_order,
     c_order_find_by_id,
+    c_order_all,
+    c_update_order,
 };

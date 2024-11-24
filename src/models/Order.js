@@ -3,6 +3,7 @@ const { default: mongoose } = require("mongoose");
 const orderSchema = new mongoose.Schema({
     productName: String,
     quantity: Number,
+    link: { type: String, required: true, },
     price: { type: Number, required: true, },
     user_name: { type: String, required: true },
     order_status: {

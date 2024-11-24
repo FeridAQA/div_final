@@ -53,8 +53,36 @@ const order_find_by_id =async (id) => {
     const order = await Order.findById(id);
     return order
 }
+const order_all=async()=>{
+    const orders = await Order.find();
+    return orders
+}
+
+//update order
+
+const updateOrderService = async (orderId, updateData) => {
+    try {
+        // Sifarişi ID ilə tap və yenilə
+        const updatedOrder = await Order.findByIdAndUpdate(
+            orderId, // Sifarişin ID-si
+            { $set: updateData }, // Yenilənəcək məlumatlar
+            { new: true, runValidators: true } // Yenilənmiş sənəd qaytarılır və validasiya edilir
+        );
+
+        if (!updatedOrder) {
+            throw new Error("Order not found");
+        }
+
+        return updatedOrder;
+    } catch (error) {
+        console.error("Error in updateOrderService:", error.message);
+        throw error; // Controller-ə xəta qaytarılır
+    }
+};
 module.exports = {
     createOrderService,
     get_user_order,
-    order_find_by_id
+    order_find_by_id,
+    order_all,
+    updateOrderService,
 }
