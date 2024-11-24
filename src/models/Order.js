@@ -19,7 +19,7 @@ const orderSchema = new mongoose.Schema({
             'rejected'
         ], default: 'pending'
     },
-    location_id: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Location' }],
+    pickup_id: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Pickup' }],
 }, { timestamps: true });
 
 module.exports = mongoose.model('Order', orderSchema);

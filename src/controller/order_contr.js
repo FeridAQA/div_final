@@ -1,4 +1,4 @@
-const { createOrderService, get_user_order, order_find_by_id, order_all, updateOrderService } = require("../services/order.service");
+const { createOrderService, get_user_order, order_find_by_id, order_all, updateOrderService, deleteOrderService } = require("../services/order.service");
 const { find_user_by_Id } = require("../services/user.service");
 
 
@@ -88,30 +88,41 @@ const c_order_all = async (req, res) => {
 //update order
 const c_update_order = async (req, res) => {
     try {
-    const { orderId } = req.params; // URL-dən order ID götürülür
-    const updateData = req.body; // Yenilənəcək məlumatlar body-dən alınır
+        const { orderId } = req.params; // URL-dən order ID götürülür
+        const updateData = req.body; // Yenilənəcək məlumatlar body-dən alınır
 
-    if (!orderId) {
-        return res.status(400).json({ message: "Order ID is required" });
+        if (!orderId) {
+            return res.status(400).json({ message: "Order ID is required" });
+        }
+
+        // Service funksiyasını çağır
+        const updatedOrder = await updateOrderService(orderId, updateData);
+
+        return res.status(200).json({
+            message: "Order updated successfully",
+            order: updatedOrder,
+        });
+    } catch (error) {
+        console.error("Error in updateOrderController:", error.message);
+        res.status(500).json({ message: error.message });
     }
-
-    // Service funksiyasını çağır
-    const updatedOrder = await updateOrderService(orderId, updateData);
-
-    return res.status(200).json({
-        message: "Order updated successfully",
-        order: updatedOrder,
-    });
-} catch (error) {
-    console.error("Error in updateOrderController:", error.message);
-    res.status(500).json({ message: error.message });
-}
 };
 
+// delete order
+const c_delete_order = async (req, res) => {
+    try {
+        const { orderId } = req.params; // URL-dən order ID götürülür
+        const deletedOrder = await deleteOrderService(orderId);
+        res.json(deletedOrder);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+}
 module.exports = {
     c_createOrder,
     c_get_user_order,
     c_order_find_by_id,
     c_order_all,
     c_update_order,
+    c_delete_order
 };

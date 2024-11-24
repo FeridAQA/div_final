@@ -49,11 +49,11 @@ const get_user_order = async (userId) => {
 };
 
 
-const order_find_by_id =async (id) => {
+const order_find_by_id = async (id) => {
     const order = await Order.findById(id);
     return order
 }
-const order_all=async()=>{
+const order_all = async () => {
     const orders = await Order.find();
     return orders
 }
@@ -79,10 +79,26 @@ const updateOrderService = async (orderId, updateData) => {
         throw error; // Controller-ə xəta qaytarılır
     }
 };
+
+// delete order
+const deleteOrderService = async (orderId) => {
+    try {
+        // Sifarişi ID ilə tap və sil
+        const deletedOrder = await Order.findByIdAndDelete(orderId);
+        if (!deletedOrder) {
+            throw new Error("Order not found");
+        }
+        return deletedOrder;
+    } catch (error) {
+        console.error("Error in deleteOrderService:", error.message);
+        throw error; // Controller-ə xəta qaytarılır
+    }
+}
 module.exports = {
     createOrderService,
     get_user_order,
     order_find_by_id,
     order_all,
     updateOrderService,
+    deleteOrderService,
 }

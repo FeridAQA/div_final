@@ -1,5 +1,5 @@
 const express =require('express')
-const { c_createOrder, c_get_user_order, c_order_find_by_id, c_order_all, c_update_order } = require('../controller/order_contr')
+const { c_createOrder, c_get_user_order, c_order_find_by_id, c_order_all, c_update_order, c_delete_order } = require('../controller/order_contr')
 const roleMiddleware = require('../middleware/role.middleware')
 const router=express.Router()
 
@@ -8,5 +8,6 @@ router.get('/orders',c_get_user_order)
 router.get('/order_id/:order_id',c_order_find_by_id)
 router.get('/all',roleMiddleware('admin'),c_order_all)
 router.put('/update/:orderId',roleMiddleware('admin'),c_update_order)
+router.delete('/delete/:orderId',roleMiddleware('admin'),c_delete_order)
 
 module.exports=router
