@@ -50,6 +50,8 @@ const incrementUserBalance = async (userId, amount, description) => {
 }
 
 const decrementUserBalance = async (userId, amount, description) => {
+    console.log("buuuuuuuuuu",userId);
+    
     const balance = await Balance.findOne({ user_id: new mongoose.Types.ObjectId(userId) })
     if (!balance) {
         throw new Error("Balance not found for user");

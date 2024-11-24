@@ -20,7 +20,9 @@ const c_increment_user_balance = async (req, res) => {
 
 const c_decrement_user_balance=async (req,res)=>{
     try {
-        const user_id = req.user._id;
+        const user_id = req.params.userId
+        console.log("reqparams",req.params);
+        
         const { amount, description } = req.body;
         // istifadəçi body ilə öz başına mənfi göndərə biləsin 
         if (!amount || amount <= 0) {

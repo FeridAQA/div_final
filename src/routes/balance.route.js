@@ -6,6 +6,6 @@ const router=express.Router()
 router.get('/all_balanse',roleMiddleware('admin'),c_all_balance)
 router.get('/user_id',c_user_balance)
 router.post('/increment',c_increment_user_balance)
-router.post('/decrement',c_decrement_user_balance)
+router.post('/decrement/:userId',c_decrement_user_balance)
 
 module.exports=router
