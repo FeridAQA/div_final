@@ -1,7 +1,8 @@
 const User = require("../models/User")
 const { verifyPassword, hashPassword } = require("../utils/bcrypt")
 const { encodePayload } = require("../utils/jwt")
-const { createBalance } = require("./balance.service")
+const { createBalance } = require("./balance.service");
+const { createOrder_list } = require("./order_list.service");
 
 const register_user = async (params) => {
     try {
@@ -15,6 +16,10 @@ const register_user = async (params) => {
         // Balansın yaradılması
         const balance = await createBalance(savedUser._id);
         savedUser.balance_id = balance._id;
+
+        //Order_list yaratmaq
+        const orderList = await createOrder_list(savedUser._id);
+        savedUser.order_list_id = orderList._id;
 
         // Yenilənmiş istifadəçinin saxlanması
         await savedUser.save();
