@@ -12,7 +12,6 @@ const c_all_order_list = async (req, res) => {
 
 const c_user_order_list = async (req, res) => {
     try {
-        console.log(req.user);
         
         const id = req.user.order_list_id
         // console.log(id);

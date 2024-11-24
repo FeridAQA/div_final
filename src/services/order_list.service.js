@@ -6,8 +6,6 @@ const all_order_list = async () => {
     return oreder_lists
 }
 const get_order_list = async (id) => {
-    console.log("bu ==>`", id);
-
     const order_list = await Order_list.findById(id)
     console.log(order_list);
 
