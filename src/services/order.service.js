@@ -1,12 +1,13 @@
 const Order = require("../models/Order");
 const Order_list = require("../models/Order_list");
 const User = require("../models/User");
+const { decrementUserBalance } = require("./balance.service");
 
 
 const createOrderService = async (userId, orderDetails) => {
     try {
         // Yeni sifariş yaradılır
-        const newOrder = await Order.create(orderDetails);
+        const newOrder = await Order.create({ ...orderDetails, user_id: userId });
 
         // Mövcud istifadəçinin `Order_list`-inə sifariş əlavə edilir
         const updatedOrderList = await Order_list.findOneAndUpdate(
@@ -62,15 +63,35 @@ const order_all = async () => {
 
 const updateOrderService = async (orderId, updateData) => {
     try {
-        // Sifarişi ID ilə tap və yenilə
+        // Sifarişi ID ilə tap
+        const order = await Order.findById(orderId);
+        if (!order) {
+            throw new Error("Order not found");
+        }
+
+        // Əgər status "accepted" olarsa, balansdan pul çıxmağa çalışırıq
+        if (updateData.status === "accepted") {
+            try {
+                await decrementUserBalance(order.user_id, order.totalAmount, "Order accepted");
+            } catch (error) {
+                if (error.message === "Insufficient balance") {
+                    // Əgər balans kifayət etmirsə, statusu dəyişirik
+                    updateData.status = "insufficient_balance";
+                } else {
+                    throw error; // Başqa xəta baş verərsə, onu işlə
+                }
+            }
+        }
+
+        // Sifarişi yeniləyirik
         const updatedOrder = await Order.findByIdAndUpdate(
-            orderId, // Sifarişin ID-si
-            { $set: updateData }, // Yenilənəcək məlumatlar
-            { new: true, runValidators: true } // Yenilənmiş sənəd qaytarılır və validasiya edilir
+            orderId,
+            { $set: updateData },
+            { new: true, runValidators: true }
         );
 
         if (!updatedOrder) {
-            throw new Error("Order not found");
+            throw new Error("Order not found after update");
         }
 
         return updatedOrder;

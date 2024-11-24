@@ -6,6 +6,7 @@ const orderSchema = new mongoose.Schema({
     link: { type: String, required: true, },
     price: { type: Number, required: true, },
     user_name: { type: String, required: true },
+    user_id: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     order_status: {
         type: String, enum: [
             'pending',

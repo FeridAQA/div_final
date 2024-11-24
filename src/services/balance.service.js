@@ -56,6 +56,9 @@ const decrementUserBalance = async (userId, amount, description) => {
     if (!balance) {
         throw new Error("Balance not found for user");
     }
+    if (balance.total_balance < amount) {
+        throw new Error("Insufficient balance"); // Əgər balans kifayət deyilsə, xəta qaytarılır
+    }
 
     balance.total_balance -=amount
     balance.balance_history.push({
