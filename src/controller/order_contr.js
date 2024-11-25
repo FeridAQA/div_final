@@ -1,5 +1,5 @@
 const { default: mongoose } = require("mongoose");
-const { createOrderService, get_user_order, order_find_by_id, order_all, updateOrderService, deleteOrderService } = require("../services/order.service");
+const { createOrderService, get_user_order, order_find_by_id, order_all, updateOrderService, deleteOrderService, updateOrderToCanceledService } = require("../services/order.service");
 const { find_user_by_Id } = require("../services/user.service");
 
 
@@ -120,11 +120,41 @@ const c_delete_order = async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 }
+
+
+
+// user update order
+const c_update_order_to_canceled = async (req, res) => {
+    try {
+        const { orderId } = req.params; // URL-dən sifariş ID-si alınır
+        const userId = req.user.id; // `req.user` vasitəsilə istifadəçi ID-si alınır
+
+        if (!mongoose.Types.ObjectId.isValid(orderId)) {
+            return res.status(400).json({ message: "Invalid Order ID" });
+        }
+
+        console.log("User attempting to cancel order:", userId, "Order ID:", orderId);
+
+        // Xidmət funksiyasını çağırırıq
+        const updatedOrder = await updateOrderToCanceledService(orderId, userId);
+
+        return res.status(200).json({
+            message: "Order successfully canceled",
+            order: updatedOrder,
+        });
+    } catch (error) {
+        console.error("Error in cancelOrderController:", error.message);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+
 module.exports = {
     c_createOrder,
     c_get_user_order,
     c_order_find_by_id,
     c_order_all,
     c_update_order,
-    c_delete_order
+    c_delete_order,
+    c_update_order_to_canceled
 };

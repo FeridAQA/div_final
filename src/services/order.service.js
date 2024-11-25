@@ -114,6 +114,35 @@ const deleteOrderService = async (orderId) => {
         throw error; // Controller-ə xəta qaytarılır
     }
 }
+
+
+// user update_order
+const updateOrderToCanceledService = async (orderId, userId) => {
+    const order = await Order.findById(orderId);
+
+    if (!order) {
+        throw new Error("Order not found");
+    }
+
+    // Yalnız pending statusu olduqda dəyişiklik edə bilər
+    if (order.order_status !== "pending") {
+        throw new Error("Only orders with 'pending' status can be canceled");
+    }
+
+    // Sifarişin istifadəçiyə aid olduğunu yoxlayırıq
+    if (!order.user_id.equals(userId)) {
+        throw new Error("You are not authorized to cancel this order");
+    }
+
+    // Sifariş statusunu canceled kimi yeniləyirik
+    order.order_status = "canceled";
+    await order.save();
+
+    console.log("Order successfully canceled:", order);
+    return order;
+};
+
+
 module.exports = {
     createOrderService,
     get_user_order,
@@ -121,4 +150,5 @@ module.exports = {
     order_all,
     updateOrderService,
     deleteOrderService,
+    updateOrderToCanceledService
 }
