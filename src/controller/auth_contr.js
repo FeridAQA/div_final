@@ -5,9 +5,9 @@ const c_register_user = async (req, res) => {
     try {
         // əgər kimsə rol daxil etmək istəsə birinci onu sil 
         // default user getsin qoy
-        if (req.body.role) {
-            delete req.body.role;
-        }
+        // if (req.body.role) {
+        //     delete req.body.role;
+        // }
         let user = await register_user({ ...req.body })
         
    

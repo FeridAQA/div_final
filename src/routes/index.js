@@ -17,8 +17,8 @@ router.use('/balance',authMiddleware ,balance_route)
 router.use('/order_list',authMiddleware ,order_list_route)
 router.use('/order',authMiddleware ,order_route)
 router.use('/user', authMiddleware ,roleMiddleware('admin'),user_route)
-router.use('/general', authMiddleware ,roleMiddleware('admin'),general_route)
-router.use('/tarif', authMiddleware ,roleMiddleware('admin'),tarif_route)
-router.use('/pickup', authMiddleware ,roleMiddleware('admin'),pickup_route)
+router.use('/general',general_route)
+router.use('/tarif',tarif_route)
+router.use('/pickup',pickup_route)
 
 module.exports=router

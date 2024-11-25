@@ -9,7 +9,7 @@ const tarifSchema = new mongoose.Schema({
         ]
     },
     rates: [{
-        weight: { type: String, required: true, },
+        weight_range: { type: String, required: true, },
         price: { type: Number, required: true, },
     }
     ]
