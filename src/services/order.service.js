@@ -62,44 +62,43 @@ const order_all = async () => {
 //update order
 
 const updateOrderService = async (orderId, updateData) => {
-    try {
-        // Sifarişi ID ilə tap
-        const order = await Order.findById(orderId);
-        if (!order) {
-            throw new Error("Order not found");
-        }
+    const order = await Order.findById(orderId);
+    if (!order) {
+        throw new Error("Order not found");
+    }
 
-        // Əgər status "accepted" olarsa, balansdan pul çıxmağa çalışırıq
-        if (updateData.status === "accepted") {
-            try {
-                await decrementUserBalance(order.user_id, order.totalAmount, "Order accepted");
-            } catch (error) {
-                if (error.message === "Insufficient balance") {
-                    // Əgər balans kifayət etmirsə, statusu dəyişirik
-                    updateData.status = "insufficient_balance";
-                } else {
-                    throw error; // Başqa xəta baş verərsə, onu işlə
-                }
+    if (updateData.order_status === "accepted") {
+        console.log("Attempting to decrement balance for user:", order.user_id);
+        try {
+            const result = await decrementUserBalance(order.user_id, order.price, "Order accepted");
+            console.log("Balance decrement result:", result);
+        } catch (error) {
+            console.error("Error during balance decrement:", error.message);
+            if (error.message === "Insufficient balance") {
+                updateData.order_status = "insufficient_balance";
+            } else {
+                throw error;
             }
         }
-
-        // Sifarişi yeniləyirik
-        const updatedOrder = await Order.findByIdAndUpdate(
-            orderId,
-            { $set: updateData },
-            { new: true, runValidators: true }
-        );
-
-        if (!updatedOrder) {
-            throw new Error("Order not found after update");
-        }
-
-        return updatedOrder;
-    } catch (error) {
-        console.error("Error in updateOrderService:", error.message);
-        throw error; // Controller-ə xəta qaytarılır
     }
+
+    const updatedOrder = await Order.findByIdAndUpdate(
+        orderId,
+        { $set: updateData },
+        { new: true, runValidators: true }
+    );
+
+    if (!updatedOrder) {
+        throw new Error("Order not found after update");
+    }
+
+    console.log("Order successfully updated:", updatedOrder);
+    return updatedOrder;
 };
+
+
+
+
 
 // delete order
 const deleteOrderService = async (orderId) => {

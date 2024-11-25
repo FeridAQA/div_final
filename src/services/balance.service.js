@@ -50,25 +50,29 @@ const incrementUserBalance = async (userId, amount, description) => {
 }
 
 const decrementUserBalance = async (userId, amount, description) => {
-    console.log("buuuuuuuuuu",userId);
-    
-    const balance = await Balance.findOne({ user_id: new mongoose.Types.ObjectId(userId) })
+    const balance = await Balance.findOne({ user_id: new mongoose.Types.ObjectId(userId) });
     if (!balance) {
         throw new Error("Balance not found for user");
     }
+    console.log("Current balance:", balance);
+
     if (balance.total_balance < amount) {
-        throw new Error("Insufficient balance"); // Əgər balans kifayət deyilsə, xəta qaytarılır
+        throw new Error("Insufficient balance");
     }
 
-    balance.total_balance -=amount
+    balance.total_balance -= amount;
     balance.balance_history.push({
         amount,
         type: 'decrement',
-        description
-    })
-    await balance.save()
-    return balance.balance_history
-}
+        description,
+        date: new Date(),
+    });
+    await balance.save();
+    console.log("Balance updated successfully:", balance);
+    return balance.balance_history;
+};
+
+
 module.exports = {
     incrementUserBalance,
     createBalance,

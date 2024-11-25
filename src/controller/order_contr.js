@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const { createOrderService, get_user_order, order_find_by_id, order_all, updateOrderService, deleteOrderService } = require("../services/order.service");
 const { find_user_by_Id } = require("../services/user.service");
 
@@ -88,14 +89,14 @@ const c_order_all = async (req, res) => {
 //update order
 const c_update_order = async (req, res) => {
     try {
-        const { orderId } = req.params; // URL-dən order ID götürülür
-        const updateData = req.body; // Yenilənəcək məlumatlar body-dən alınır
+        const { orderId } = req.params;
+        const updateData = req.body;
 
-        if (!orderId) {
-            return res.status(400).json({ message: "Order ID is required" });
+        if (!orderId || !mongoose.Types.ObjectId.isValid(orderId)) {
+            return res.status(400).json({ message: "Invalid or missing Order ID" });
         }
 
-        // Service funksiyasını çağır
+        console.log("Update data received for order:", updateData);
         const updatedOrder = await updateOrderService(orderId, updateData);
 
         return res.status(200).json({
@@ -107,6 +108,7 @@ const c_update_order = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
 
 // delete order
 const c_delete_order = async (req, res) => {
